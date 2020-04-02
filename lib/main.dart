@@ -15,6 +15,9 @@ class BytebankApp extends StatelessWidget {
 }
 
 class FormularioTransferencia extends StatelessWidget {
+  final TextEditingController _controllerCampoNumeroConta = TextEditingController();
+  final TextEditingController _controllerCampoValor = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +29,7 @@ class FormularioTransferencia extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              controller: _controllerCampoNumeroConta,
               style: TextStyle(fontSize: 24.0),
               decoration: InputDecoration(
                 labelText: 'Númedo da Conta',
@@ -37,6 +41,7 @@ class FormularioTransferencia extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              controller: _controllerCampoValor,
               style: TextStyle(fontSize: 24.0),
               decoration: InputDecoration(
                   icon: Icon(Icons.monetization_on),
@@ -47,6 +52,19 @@ class FormularioTransferencia extends StatelessWidget {
           ),
           RaisedButton(
             child: Text('Confirmar'),
+            onPressed: (){
+              final int numeroConta = int.tryParse(_controllerCampoNumeroConta.text);
+              final double valor = double.tryParse(_controllerCampoValor.text);
+              if (numeroConta != null && valor != null){
+                final transferenciaCriada = Transferencia(valor,numeroConta);
+                debugPrint('$transferenciaCriada');
+                Scaffold.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('$transferenciaCriada'),
+                  ),
+                );
+              }
+            },
           )
         ],
       ),
@@ -96,4 +114,9 @@ class Transferencia {
   final int numeroConta;
 
   Transferencia(this.valor, this.numeroConta);
+
+  @override
+  String toString() {
+    return 'Transferencia{valor: $valor, numeroConta: $numeroConta}';
+  }
 }
