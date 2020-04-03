@@ -16,7 +16,7 @@ class BytebankApp extends StatelessWidget {
 
 class FormularioTransferencia extends StatelessWidget {
   final TextEditingController _controllerCampoNumeroConta =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _controllerCampoValor = TextEditingController();
 
   @override
@@ -84,34 +84,46 @@ class Editor extends StatelessWidget {
   }
 }
 
-class ListaTransferencias extends StatelessWidget {
+class ListaTransferencias extends StatefulWidget {
+  final List<Transferencia> _transferencias = List();
+
+  @override
+  State<StatefulWidget> createState() {
+    return ListaTransferenciaState();
+  }
+}
+
+class ListaTransferenciaState extends State<ListaTransferencias>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Transferências'),
       ),
-      body: Column(
-        children: <Widget>[
-          ItemTransferencia(Transferencia(100.0, 1000)),
-          ItemTransferencia(Transferencia(200.0, 1001)),
-          ItemTransferencia(Transferencia(300.0, 2000)),
-        ],
+      body: ListView.builder(
+        itemCount: widget._transferencias.length,
+        itemBuilder: (context, indice){
+          final transferencia = widget._transferencias[indice];
+          return ItemTransferencia(transferencia);
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          final Future<Transferencia> future = Navigator.push(context, MaterialPageRoute(builder: (context){
+          final Future<Transferencia> future = Navigator.push(
+              context, MaterialPageRoute(builder: (context) {
             return FormularioTransferencia();
           }));
-          future.then((transferenciaRecebida){
+          future.then((transferenciaRecebida) {
             debugPrint('then do Future');
             debugPrint('$transferenciaRecebida');
+            widget._transferencias.add(transferenciaRecebida);
           });
         },
       ),
     );
   }
+
 }
 
 class ItemTransferencia extends StatelessWidget {
@@ -123,10 +135,10 @@ class ItemTransferencia extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
-      leading: Icon(Icons.monetization_on),
-      title: Text(_transferencia.valor.toString()),
-      subtitle: Text(_transferencia.numeroConta.toString()),
-    ));
+          leading: Icon(Icons.monetization_on),
+          title: Text(_transferencia.valor.toString()),
+          subtitle: Text(_transferencia.numeroConta.toString()),
+        ));
   }
 }
 
